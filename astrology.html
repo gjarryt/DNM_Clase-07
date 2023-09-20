@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="style.css" />
+        <title>DNOO37</title>
+    </head>
+    <body>
+        <nav>
+            <h1><a href="index.html">GASPAR JARRY</a></h1>
+            <select onchange="location = this.value;">
+                <option value="index.html">INDEX</option>
+                <option value="astrology.html" selected>ASTROLOGY</option>
+                <option value="astronomy.html">ASTRONOMY</option>
+                <option value="earthquakes.html">EARTHQUAKES</option>
+                <option value="weather.html">WEATHER</option>
+            </select>
+        </nav>
+        <header style="display: none;">
+            <div>Marque uno:</div>
+            <div><input type="radio" name="selecciona" value="todos" checked />Todos</div>
+            <div><input type="radio" name="selecciona" value="agua" />Agua</div>
+            <div><input type="radio" name="selecciona" value="aire" />Aire</div>
+            <div><input type="radio" name="selecciona" value="fuego" />Fuego</div>
+            <div><input type="radio" name="selecciona" value="tierra" />Tierra</div>
+        </header>
+        <aside></aside>
+        <main></main>
+        <script>
+            const alternativas = document.querySelector("header");
+            const detalles = document.querySelector("aside");
+            const respuesta = document.querySelector("main");
+            var datos;
+            async function estudiantes() {
+                const data = await fetch("https://raw.githubusercontent.com/profesorfaco/dno037-2023-2/main/clase-07/_curso.json");
+                datos = await data.json();
+                alternativas.removeAttribute("style");
+                datos.forEach((x) => {
+                    if(x.github !== ""){
+                        respuesta.innerHTML += `<article><div><img src="${x.avatar}"></div><div><p><a href="integrante.html?lista=${x.lista}">${x.nombres.split(" ")[0]} ${x.apellidos.split(" ")[0]}</a></p><p>${
+                            x.zodiaco.signo}</p></div></article>`;
+                    }
+                });
+            }
+            estudiantes().catch((error) => console.error(error));
+
+            function compatibilidad(valor) {
+                respuesta.innerHTML = ``;
+                detalles.innerHTML = ``;
+
+                //Lo que sigue lo saqué de https://www.clara.es/
+
+                if (valor == "fuego") {
+                    about =
+                        "<em>Con signo de fuego (Aries, Leo y Sagitario)</em>: Tal como el fuego, este signo es pasional, dinámico y temperamental. El fuego puede entregar calidez, o puede causar gran destrucción. Se apaga cuando no hay combustible, pero también se regenera de las cenizas.";
+                } else if (valor == "agua") {
+                    about =
+                        "<em>Con signo de agua (Cáncer, Escorpio y Piscis)</em>: Intuitivos, emocionales y sensibles, este signo es tan misterioso como el mismo océano. Pueden ser refrescantes o te puede ahogar en sus profundidades. Todo líquido necesita un contenedor, sino se seca y desaparece.";
+                } else if (valor == "aire") {
+                    about =
+                        "<em>Con signo de aire (Géminis, Libra y Acuario)</em>: Son individuos de acción, ideas y vientos de cambio. Cuando te golpea una brisa fuerte, te mueves. Algunos pueden vivir en las nubes, pero otros son tan poderosos como la misma gravedad. Le dan un respiro de aire fresco a los demás cuando las cosas se ponen muy planas.";
+                } else if (valor == "tierra"){
+                    about =
+                        "<em>Con signo de tierra (Tauro, Virgo, Capricornio)</em>: Son las personas aterrizadas del planeta, quienes nos aterrizan y nos recuerdan de comenzar con una base firme. Van lento pero seguro, son leales y estables. En sus mejores días son prácticos y fuertes, en sus peores días son materialistas y superficiales.";
+                } else {
+                    about = "Diseño y nuevos medios."
+                }
+
+                detalles.innerHTML += `<div><p>${about}</p></div>`;
+
+                datos.forEach((x) => {
+                    if (valor == x.zodiaco.elemento) {
+                        respuesta.innerHTML += `<article><div><img src="${x.avatar}"></div><div><p><a href="integrante.html?lista=${x.lista}">${x.nombres.split(" ")[0]} ${x.apellidos.split(" ")[0]}</a></p><p>${
+                            x.zodiaco.signo
+                        }</p></div></article>`;
+                    }
+                });
+            }
+
+            const seleccionado = document.querySelectorAll('input[name="selecciona"]');
+
+            seleccionado.forEach((i) => {
+                i.addEventListener("change", function () {
+                    var valor = this.value;
+                    if (valor !== "todos"){
+                        console.log(valor);
+                        compatibilidad(valor);
+                    } else {
+                        window.location.reload();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
